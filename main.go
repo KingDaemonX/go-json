@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -29,15 +28,8 @@ func main() {
 	}
 
 	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		logger.Error("error occured while reading response body data into variable", "error", err.Error())
-		return
-	}
-
-	if err := json.Unmarshal(body, &catFact); err != nil {
-		logger.Error("error occured while marshalling data into catFact struct", "error", err.Error())
+	if err := json.NewDecoder(resp.Body).Decode(&catFact); err != nil {
+		logger.Error("error occured while decoding json data into catFact struct", "error", err.Error())
 		return
 	}
 
