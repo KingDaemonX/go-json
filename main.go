@@ -16,13 +16,14 @@ func main() {
 	client := http.DefaultClient
 
 	resp, err := client.Get("https://catfact.ninja/fact")
-
-	body, _ := io.ReadAll(resp.Body)
-
 	// check for error
 	if err != nil {
 		logger.Error("response error from getting a cat fact")
 	}
+
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
 
 	logger.Info(string(body), "user", os.Getenv("USER"))
 }
